@@ -23,3 +23,5 @@
 [experimental.opentelemetry]
 	enabled = true
 	apiSdk = "/Users/haza/Projects/my-redwood-sentry/api/src/opentelemetry.ts"
+[experimental.sentry]
+	enabled = true
