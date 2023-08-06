@@ -3,6 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "@opentelemetry/api": "^1.4.1",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.41.1",
+    "@opentelemetry/instrumentation": "^0.41.1",
+    "@opentelemetry/instrumentation-fastify": "^0.32.0",
+    "@opentelemetry/instrumentation-http": "^0.41.1",
+    "@opentelemetry/resources": "^1.15.1",
+    "@opentelemetry/sdk-node": "^0.41.1",
+    "@opentelemetry/semantic-conventions": "^1.15.1",
+    "@prisma/instrumentation": "^5.1.1",
     "@redwoodjs/api": "6.0.3",
     "@redwoodjs/graphql-server": "6.0.3"
   }
