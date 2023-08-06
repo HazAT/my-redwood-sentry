@@ -1,20 +1,19 @@
 const { diag, DiagConsoleLogger, DiagLogLevel } = require('@opentelemetry/api')
-const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http')
 const { registerInstrumentations } = require('@opentelemetry/instrumentation')
 const {
   FastifyInstrumentation,
 } = require('@opentelemetry/instrumentation-fastify')
 const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http')
 const { Resource } = require('@opentelemetry/resources')
-const {
-  NodeTracerProvider,
-  SimpleSpanProcessor,
-} = require('@opentelemetry/sdk-trace-node')
+const { NodeTracerProvider } = require('@opentelemetry/sdk-trace-node')
 const {
   SemanticResourceAttributes,
 } = require('@opentelemetry/semantic-conventions')
-const { PrismaInstrumentation } = require ('@prisma/instrumentation')
-
+const { PrismaInstrumentation } = require('@prisma/instrumentation')
+const {
+  SentrySpanProcessor,
+  SentryPropagator,
+} = require('@sentry/opentelemetry-node')
 // You may wish to set this to DiagLogLevel.DEBUG when you need to debug opentelemetry itself
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO)
 
@@ -25,19 +24,16 @@ const resource = Resource.default().merge(
   })
 )
 
-const exporter = new OTLPTraceExporter({
-  // Update this URL to point to where your OTLP compatible collector is listening
-  // The redwood development studio (`yarn rw exp studio`) can collect your telemetry at `http://127.0.0.1:4318/v1/traces`
-  url: 'http://127.0.0.1:4318/v1/traces',
-})
-
-// You may wish to switch to BatchSpanProcessor in production as it is the recommended choice for performance reasons
-const processor = new SimpleSpanProcessor(exporter)
-
 const provider = new NodeTracerProvider({
   resource: resource,
 })
-provider.addSpanProcessor(processor)
+
+provider.addSpanProcessor(new SentrySpanProcessor())
+
+// Initialize the provider
+provider.register({
+  propagator: new SentryPropagator(),
+})
 
 // Optionally register instrumentation libraries here
 registerInstrumentations({
@@ -47,7 +43,7 @@ registerInstrumentations({
     new FastifyInstrumentation(),
     new PrismaInstrumentation({
       middleware: true,
-    })
+    }),
   ],
 })
 

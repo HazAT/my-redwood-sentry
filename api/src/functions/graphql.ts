@@ -1,4 +1,5 @@
 import { useSentry } from '@envelop/sentry'
+
 import { createGraphQLHandler } from '@redwoodjs/graphql-server'
 
 import directives from 'src/directives/**/*.{js,ts}'
